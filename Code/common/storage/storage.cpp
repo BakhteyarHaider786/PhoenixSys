@@ -5,12 +5,12 @@
 #include <cstdio>
 #include <algorithm>
 
-namespace fs = std::filesystem;
-
 using std::string;
+using std::sort;
+using std::fopen;
 
 Storage::Storage(const std::string& name): name(name) {
-    file = std::fopen(("data/" + name).c_str(), "rb+");
+    file = fopen(("data/" + name).c_str(), "rb+");
     if (file == NULL) {
         exit(EXIT_FAILURE);
     }
@@ -26,24 +26,12 @@ Storage::Storage(const std::string& name): name(name) {
         }
         entries.push_back(entry);
     } while (true);
-    std::sort(entries.begin(), entries.end(), [](entry_t a, entry_t b) { return a.id < b.id; });
-
-//
-//    id = entries[entries.size() - 1].id;
-//    id++;
-//    e = entries;
-//    for (auto entry : e) {
-//        entry.id = id;
-//        id++;
-//        entries.push_back(entry);
-//    }
-
-
-    std::cout << "loaded " << entries.size() << " records" << std::endl;
+    sort(entries.begin(), entries.end(), [](entry_t a, entry_t b) { return a.id < b.id; });
+    fclose(file);
 }
 
 Storage::~Storage() {
-    freopen(("data/" + name).c_str(), "wb", file);
+    file = fopen(("data/" + name).c_str(), "rb+");
     if (!entries.empty()) {
         fseek(file, 0, SEEK_SET);
         for (auto& entry : entries) {
@@ -55,9 +43,10 @@ Storage::~Storage() {
 }
 
 void Storage::add(entry_t &entry) {
-    int index = findById(entry.id);
-    if (index > -1) {
-        return;
+    if (!entries.empty()) {
+        entry.id = entries[entries.size() - 1].id + 1;
+    } else {
+        entry.id = 1;
     }
     pending.push_back(entry);
 }
@@ -67,6 +56,7 @@ void Storage::commit() {
         entries.push_back(entry);
         pending.pop_back();
     }
+    sort(entries.begin(), entries.end(), [](entry_t a, entry_t b) { return a.id < b.id; });
 }
 
 int Storage::findById(uint32_t id) {
@@ -100,5 +90,17 @@ entry_t Storage::getByIndex(uint32_t index) {
 
 std::vector<entry_t> Storage::all() {
     return entries;
+}
+
+void Storage::save() {
+    file = fopen(("data/" + name).c_str(), "rb+");
+    if (!entries.empty()) {
+        fseek(file, 0, SEEK_SET);
+        for (auto& entry : entries) {
+            fwrite(&entry, 1, sizeof(entry_t), file);
+        }
+    }
+    fflush(file);
+    fclose(file);
 }
 

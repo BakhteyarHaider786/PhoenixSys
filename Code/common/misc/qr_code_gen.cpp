@@ -1,21 +1,26 @@
+#include "../../lib/qr/qrcodegen.hpp"
 #include "qr_code_gen.h"
+
 #include <fstream>
 #include <string>
-#include "../lib/qr/qrcodegen.hpp"
 
 using namespace qrcodegen;
 
 using std::string;
+using std::stringstream;
+using std::ofstream;
 
-void QrCodeGen::saveToFile(entry_t entry) {
-    std::stringstream stream;
+string QrCodeGen::saveToFile(entry_t entry) {
+    stringstream stream;
+    ofstream qr_file;
+    string path = string("qr/") + entry.area + "_" + entry.category + "-" + entry.number + ".svg";
+
     stream << entry.nid << " : " << entry.area << "-" << entry.category << "-" << entry.number;
 
-    qrcodegen::QrCode qr =  qrcodegen::QrCode::encodeText(stream.str().c_str(),  qrcodegen::QrCode::Ecc::LOW);
+    QrCode qr =  QrCode::encodeText(stream.str().c_str(), QrCode::Ecc::LOW);
 
     int border = 4;
-    std::ofstream qr_file;
-    qr_file.open(string("qr/") + entry.area + "_" + entry.category + "-" + entry.number + ".svg");
+    qr_file.open(path);
     qr_file << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
     qr_file << "<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n";
     qr_file << "<svg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" viewBox=\"0 0 ";
@@ -36,4 +41,6 @@ void QrCodeGen::saveToFile(entry_t entry) {
 
     qr_file.flush();
     qr_file.close();
+
+    return path;
 }

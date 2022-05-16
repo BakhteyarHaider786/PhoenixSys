@@ -1,7 +1,3 @@
-//
-// Created by Haider on 5/16/2022.
-//
-
 #ifndef PHOENIXSYS_ID_ENTRY_UI_H
 #define PHOENIXSYS_ID_ENTRY_UI_H
 

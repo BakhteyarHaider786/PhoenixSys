@@ -1,7 +1,7 @@
 #ifndef PHOENIXSYS_STORAGE_H
 #define PHOENIXSYS_STORAGE_H
 
-#include "entry_struct.h"
+#include "../structs/entry_struct.h"
 #include <string>
 #include <vector>
 #include <fstream>
@@ -20,6 +20,7 @@ public:
     entry_t getByIndex(uint32_t index);
     void removeById(uint32_t id);
     void commit();
+    void save();
     std::vector<entry_t> all();
 };
 

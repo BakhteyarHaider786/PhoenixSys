@@ -1,21 +1,18 @@
 #ifndef PHOENIXSYS_LOGIN_UI_H
 #define PHOENIXSYS_LOGIN_UI_H
 
-#include <ftxui/component/screen_interactive.hpp>
 #include <string>
-
-using namespace ftxui;
-using std::string;
+#include <ftxui/component/screen_interactive.hpp>
 
 class LoginUI {
 private:
-    string username;
-    string password;
+    std::string username;
+    std::string  password;
 
 public:
-    void show(ScreenInteractive &screen);
-    string getUsername();
-    string getPassword();
+    void show(ftxui::ScreenInteractive &screen);
+    std::string  getUsername();
+    std::string  getPassword();
 };
 
 

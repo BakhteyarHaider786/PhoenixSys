@@ -3,11 +3,9 @@
 
 #include <ftxui/component/screen_interactive.hpp>
 
-using namespace ftxui;
-
 class IncorrectAccessUI {
 public:
-    void show(ScreenInteractive& screen);
+    static void show(ftxui::ScreenInteractive& screen);
 };
 
 
